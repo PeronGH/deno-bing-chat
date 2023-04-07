@@ -1,0 +1,10 @@
+{
+  "fmt": {
+    "options": {
+      "semiColons": false,
+      "useTabs": false,
+      "indentWidth": 2,
+      "singleQuote": true
+    }
+  }
+}
