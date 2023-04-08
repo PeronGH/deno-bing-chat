@@ -1,2 +1,1 @@
-export * from './src/bing-chat.ts'
-export * from './src/types.ts'
+export { BingChatSession } from './src/session.ts'

@@ -1,8 +1,6 @@
-import { BingChat } from '../mod.ts'
+import { BingChatSession } from '../mod.ts'
 
-const api = new BingChat({
-  cookie: Deno.env.get('BING_COOKIE') ?? '',
-})
+const session = new BingChatSession(Deno.env.get('BING_COOKIE')!, 'Creative')
 
-const res = await api.sendMessage('who is the CEO of Twitter?')
-console.log(res.text)
+console.log('Bing:', await session.say('list 10 words'))
+console.log('Bing:', await session.say('which word above is negative?'))

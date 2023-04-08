@@ -1,4 +1,5 @@
 export type Author = 'user' | 'bot'
+export type Mode = 'Creative' | 'Balanced' | 'Precise'
 
 export type SendMessageOptions = {
   conversationId?: string

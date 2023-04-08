@@ -103,7 +103,8 @@ export class BingChat {
         let stage = 0
 
         ws.addEventListener('message', (data) => {
-          const messages = splitJsonObjects(data.data)
+          // deno-lint-ignore no-explicit-any
+          const messages: any[] = splitJsonObjects(data.data)
             .filter(Boolean)
 
           if (!messages.length) {
@@ -250,7 +251,7 @@ export class BingChat {
     return responseP
   }
 
-  createConversation(): Promise<types.ConversationResult> {
+  private createConversation(): Promise<types.ConversationResult> {
     const requestId = crypto.randomUUID()
 
     const cookie = this._cookie.includes(';')
@@ -300,8 +301,8 @@ export class BingChat {
   }
 }
 
-function splitJsonObjects(input: string): any[] {
-  const jsonObjects: any[] = []
+function splitJsonObjects(input: string): unknown[] {
+  const jsonObjects: unknown[] = []
   let jsonString = ''
   let nestedLevel = 0
 
