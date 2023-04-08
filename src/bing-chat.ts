@@ -81,20 +81,20 @@ export class BingChat {
 
         let isFulfilled = false
 
-        function cleanup() {
-          ws.close()
-        }
-
         ws.addEventListener('error', (error) => {
           console.warn('WebSocket error:', error)
-          cleanup()
+          ws.close()
           if (!isFulfilled) {
             isFulfilled = true
             reject(new Error(`WebSocket error: ${error.toString()}`))
           }
         })
+
         ws.addEventListener('close', () => {
-          // TODO
+          if (!isFulfilled) {
+            isFulfilled = true
+            reject(new Error('WebSocket closed unexpectedly'))
+          }
         })
 
         ws.addEventListener('open', () => {
@@ -226,16 +226,16 @@ export class BingChat {
 
                 if (!isFulfilled) {
                   isFulfilled = true
+                  ws.close()
                   resolve(result)
                 }
               }
             } else if (message.type === 3) {
               if (!isFulfilled) {
                 isFulfilled = true
+                ws.close()
                 resolve(result)
               }
-
-              cleanup()
               return
             } else {
               // TODO: handle other message types
