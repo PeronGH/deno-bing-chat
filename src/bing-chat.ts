@@ -1,21 +1,29 @@
 import * as types from './types.ts'
-import crypto from 'node:crypto'
+
+const genRanHex = (size: number) =>
+  [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join(
+    '',
+  )
 
 const terminalChar = ''
 
 export class BingChat {
-  protected _cookie: string
-  protected _debug: boolean
+  private _cookie: string
+  private _debug: boolean
+  private _jailbreak: boolean
 
   constructor(opts: {
     cookie: string
 
     /** @defaultValue `false` **/
+    jailbreak?: boolean
+    /** @defaultValue `false` **/
     debug?: boolean
   }) {
-    const { cookie, debug = false } = opts
+    const { cookie, debug = false, jailbreak = false } = opts
 
     this._cookie = cookie
+    this._jailbreak = !!jailbreak
     this._debug = !!debug
 
     if (!this._cookie) {
@@ -51,7 +59,7 @@ export class BingChat {
     } = opts
 
     let { conversationId, clientId, conversationSignature } = opts
-    const isStartOfSession = !(
+    const isStartOfSession = this._jailbreak || !(
       conversationId &&
       clientId &&
       conversationSignature
@@ -74,6 +82,7 @@ export class BingChat {
       text: '',
     }
 
+    // start message websocket
     const responseP = new Promise<types.ChatMessage>(
       (resolve, reject) => {
         const chatWebsocketUrl = 'wss://sydney.bing.com/sydney/ChatHub'
@@ -103,8 +112,8 @@ export class BingChat {
         let stage = 0
 
         ws.addEventListener('message', (data) => {
-          // deno-lint-ignore no-explicit-any
-          const messages: any[] = String(data.data)
+          // get messages
+          const messages = String(data.data)
             .split(terminalChar)
             .map((s) => {
               try {
@@ -115,6 +124,7 @@ export class BingChat {
             })
             .filter(Boolean)
 
+          // if there are no messages, return
           if (!messages.length) {
             return
           }
@@ -122,7 +132,7 @@ export class BingChat {
           if (stage === 0) {
             ws.send(`{"type":6}${terminalChar}`)
 
-            const traceId = crypto.randomBytes(16).toString('hex')
+            const traceId = genRanHex(32)
 
             // example location: 'lat:47.639557;long:-122.128159;re=1000m;'
             const locationStr = location
@@ -131,7 +141,7 @@ export class BingChat {
               };`
               : undefined
 
-            // Sets the correct options for the variant of the model
+            // sets the correct options for the variant of the model
             const optionsSets = [
               'nlu_direct_response_filter',
               'deepleo',
@@ -150,6 +160,8 @@ export class BingChat {
                 optionsSets.push('h3precise')
               }
             }
+
+            // params of the first message sent by client
             const params = {
               arguments: [
                 {
