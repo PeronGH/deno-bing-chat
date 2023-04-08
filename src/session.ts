@@ -11,13 +11,15 @@ export class BingChatSession {
     this.#api = new BingChat({ cookie })
   }
 
-  async say(
+  async send(
     text: string,
     onProgress: SendMessageOptions['onProgress'] = () => {},
   ): Promise<string> {
     const res = await this.#api.sendMessage(
       text,
-      this.#lastResponse ?? { onProgress },
+      this.#lastResponse
+        ? { ...this.#lastResponse, onProgress }
+        : { onProgress },
     )
 
     this.#lastResponse = res
