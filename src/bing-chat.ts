@@ -104,7 +104,15 @@ export class BingChat {
 
         ws.addEventListener('message', (data) => {
           // deno-lint-ignore no-explicit-any
-          const messages: any[] = splitJsonObjects(data.data)
+          const messages: any[] = String(data.data)
+            .split(terminalChar)
+            .map((s) => {
+              try {
+                return JSON.parse(s)
+              } catch {
+                return s
+              }
+            })
             .filter(Boolean)
 
           if (!messages.length) {
@@ -301,31 +309,3 @@ export class BingChat {
   }
 }
 
-function splitJsonObjects(input: string): unknown[] {
-  const jsonObjects: unknown[] = []
-  let jsonString = ''
-  let nestedLevel = 0
-
-  for (const char of input) {
-    jsonString += char
-
-    if (char === '{') {
-      nestedLevel++
-    } else if (char === '}') {
-      nestedLevel--
-
-      if (nestedLevel === 0) {
-        try {
-          const jsonObject = JSON.parse(jsonString)
-          jsonObjects.push(jsonObject)
-        } catch {
-          jsonObjects.push(jsonString)
-        }
-
-        jsonString = ''
-      }
-    }
-  }
-
-  return jsonObjects
-}
