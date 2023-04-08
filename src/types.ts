@@ -1,5 +1,5 @@
 export type Author = 'user' | 'bot'
-export type Mode = 'Creative' | 'Balanced' | 'Precise'
+export type Variant = 'Balanced' | 'Creative' | 'Precise'
 
 export type SendMessageOptions = {
   conversationId?: string
@@ -7,7 +7,7 @@ export type SendMessageOptions = {
   conversationSignature?: string
   invocationId?: string
   messageType?: string
-  variant?: string
+  variant?: Variant
   locale?: string
   market?: string
   region?: string
@@ -31,7 +31,7 @@ export interface ChatMessage {
   conversationExpiryTime?: string
   invocationId?: string
   messageType?: string
-  variant?: string
+  variant?: Variant
 
   detail?: ChatMessageFull | ChatMessagePartial
 }

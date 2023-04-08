@@ -1,12 +1,12 @@
 import { BingChat } from './bing-chat.ts'
-import { ChatMessage, Mode, SendMessageOptions } from './types.ts'
+import { ChatMessage, SendMessageOptions, Variant } from './types.ts'
 
 export class BingChatSession {
   #lastResponse: ChatMessage | undefined
   #api: BingChat
   constructor(
     cookie: string,
-    public mode: Mode = 'Balanced',
+    public mode: Variant = 'Balanced',
   ) {
     this.#api = new BingChat({ cookie })
   }
