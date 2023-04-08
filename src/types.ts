@@ -17,6 +17,8 @@ export type SendMessageOptions = {
     re?: string
   }
 
+  useJailbreak?: boolean
+
   onProgress?: (partialResponse: ChatMessage) => void
 }
 

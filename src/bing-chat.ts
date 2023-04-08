@@ -10,20 +10,16 @@ const terminalChar = ''
 export class BingChat {
   private _cookie: string
   private _debug: boolean
-  private _jailbreak: boolean
 
   constructor(opts: {
     cookie: string
 
     /** @defaultValue `false` **/
-    jailbreak?: boolean
-    /** @defaultValue `false` **/
     debug?: boolean
   }) {
-    const { cookie, debug = false, jailbreak = false } = opts
+    const { cookie, debug = false } = opts
 
     this._cookie = cookie
-    this._jailbreak = !!jailbreak
     this._debug = !!debug
 
     if (!this._cookie) {
@@ -54,12 +50,15 @@ export class BingChat {
       market = 'en-US',
       region = 'US',
       location,
-      messageType = 'Chat',
+      useJailbreak = false,
+      messageType = useJailbreak ? 'SearchQuery' : 'Chat',
       variant = 'Balanced',
     } = opts
 
+    if (useJailbreak) text = ''
+
     let { conversationId, clientId, conversationSignature } = opts
-    const isStartOfSession = this._jailbreak || !(
+    const isStartOfSession = useJailbreak || !(
       conversationId &&
       clientId &&
       conversationSignature
