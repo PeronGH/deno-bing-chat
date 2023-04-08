@@ -1,6 +1,13 @@
 export type Author = 'user' | 'bot'
 export type Variant = 'Balanced' | 'Creative' | 'Precise'
 
+export type ClientInitOptions = {
+  host?: string
+  userToken?: string
+  cookies?: string
+  debug?: boolean
+}
+
 export type SendMessageOptions = {
   conversationId?: string
   clientId?: string
